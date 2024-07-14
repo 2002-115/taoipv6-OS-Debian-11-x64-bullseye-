@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# Nhận đầu vào từ người dùng
-read -p "Nhập số lượng proxy cần tạo: " proxy_count
+# Nhận đầu vào từ người dùng và kiểm tra đầu vào
+while true; do
+    read -p "Nhập số lượng proxy cần tạo (1-9999): " proxy_count
+    if [[ "$proxy_count" =~ ^[0-9]+$ ]] && [ "$proxy_count" -ge 1 ] && [ "$proxy_count" -le 9999 ]; then
+        break
+    else
+        echo "Vui lòng nhập một số hợp lệ từ 1 đến 9999."
+    fi
+done
 
 # Tạo ngẫu nhiên username và password
 username=$(openssl rand -base64 12)
