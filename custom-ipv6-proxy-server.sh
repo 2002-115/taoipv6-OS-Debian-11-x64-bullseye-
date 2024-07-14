@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Nhận đầu vào từ người dùng
+read -p "Nhập số lượng proxy cần tạo: " proxy_count
+
+# Tạo ngẫu nhiên username và password
+username=$(openssl rand -base64 12)
+password=$(openssl rand -base64 12)
+
+# In thông tin đã nhập và tạo ngẫu nhiên
+echo "Số lượng proxy cần tạo: $proxy_count"
+echo "Username: $username"
+echo "Password: $password"
+
+# Chạy script gốc với các tham số đã được chỉnh sửa
+wget https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
+./ipv6-proxy-server.sh -s 64 -c $proxy_count -u $username -p $password -t http -r 10
+
+# Nén các tệp tạo ra thành file zip với mật khẩu ngẫu nhiên
+zip_password=$(openssl rand -base64 12)
+zip -P "$zip_password" ipv6-proxy-config.zip ipv6-proxy-server.sh
+
+# Tải tệp zip lên bashupload.com
+upload_response=$(curl -s --upload-file ipv6-proxy-config.zip https://bashupload.com/ipv6-proxy-config.zip)
+
+# Hiển thị đường link tải về và mật khẩu file zip
+echo "Đường link tải về: $upload_response"
+echo "Mật khẩu file zip: $zip_password"
