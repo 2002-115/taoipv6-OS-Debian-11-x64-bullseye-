@@ -2,6 +2,8 @@
 
 # Elevate to root
 sudo su
+# cai dat phu
+sudo apt-get install zip curl openssl
 
 # Download the ipv6-proxy-server script
 wget -qO- https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh -O ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
