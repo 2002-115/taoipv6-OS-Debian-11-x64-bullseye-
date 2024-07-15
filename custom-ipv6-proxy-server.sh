@@ -5,7 +5,7 @@
 sudo su
 
 # Download the ipv6-proxy-server script
-wget https://raw.githubusercontent.com/2002-115/ipv6-debian11/main/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
+wget http://69.28.88.79/tool%20ipv6/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
 
 # Generate random username and password
 USERNAME=$(openssl rand -base64 12)
