@@ -2,7 +2,8 @@
 
 # Nhận đầu vào từ người dùng và kiểm tra đầu vào
 while true; do
-    read -p "Nhập số lượng proxy cần tạo (1-9999): " proxy_count
+    read -p "Nhập số lượng proxy cần tạo (1-9999) [mặc định: 100]: " proxy_count
+    proxy_count=${proxy_count:-100} # Nếu người dùng không nhập gì, mặc định là 100
     if [[ "$proxy_count" =~ ^[0-9]+$ ]] && [ "$proxy_count" -ge 1 ] && [ "$proxy_count" -le 9999 ]; then
         break
     else
