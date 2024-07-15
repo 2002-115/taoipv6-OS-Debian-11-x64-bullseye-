@@ -13,6 +13,11 @@ mkdir -p /root/proxyserver
 UNIQUE_PROXY_FILE="/root/proxyserver/unique_backconnect_proxies.list"
 > $UNIQUE_PROXY_FILE
 
+# Open necessary ports in UFW
+ufw allow 10000:10100/tcp
+ufw allow 10000:10100/udp
+ufw reload
+
 # Loop to create 100 proxies with unique credentials
 for i in $(seq 1 100); do
     # Uninstall any existing proxy server
