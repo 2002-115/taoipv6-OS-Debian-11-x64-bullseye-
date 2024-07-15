@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# xoa proxy cu
+./ipv6-proxy-server.sh --uninstall
 # Elevate to root
 sudo su
 
