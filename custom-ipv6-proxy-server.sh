@@ -1,32 +1,50 @@
 #!/bin/bash
-# xoa proxy cu
+
+# Xóa proxy cũ
 ./ipv6-proxy-server.sh --uninstall
 
 # Elevate to root
 sudo su
 
-# Download the ipv6-proxy-server script
+# Kiểm tra và thêm cấu hình IPv6 vào /etc/network/interfaces nếu cần
+INTERFACES_FILE="/etc/network/interfaces"
+if ! grep -q "iface eth0 inet6" $INTERFACES_FILE; then
+    echo "Adding IPv6 configuration to $INTERFACES_FILE"
+    cat <<EOT >> $INTERFACES_FILE
+
+auto eth0
+iface eth0 inet dhcp
+
+iface eth0 inet6 auto
+EOT
+    # Khởi động lại dịch vụ mạng để áp dụng thay đổi
+    systemctl restart networking
+else
+    echo "IPv6 configuration already exists in $INTERFACES_FILE"
+fi
+
+# Tải xuống script ipv6-proxy-server từ GitHub và cấp quyền thực thi
 wget https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
 
-# Generate random username and password
+# Tạo tên người dùng và mật khẩu ngẫu nhiên
 USERNAME=$(openssl rand -base64 12)
 PASSWORD=$(openssl rand -base64 12)
 
-# Run the ipv6-proxy-server script with generated credentials
+# Chạy script ipv6-proxy-server với thông tin đăng nhập đã tạo
 ./ipv6-proxy-server.sh -s 64 -c 100 -u $USERNAME -p $PASSWORD -t http -r 10
 
-# Check if the proxy list file exists
+# Kiểm tra xem tệp danh sách proxy có tồn tại không
 PROXY_FILE="/root/proxyserver/backconnect_proxies.list"
 if [ -f "$PROXY_FILE" ]; then
-    # Create a zip file with a random 6-character password
+    # Tạo tệp zip với mật khẩu ngẫu nhiên 6 ký tự
     ZIP_FILE="/root/proxyserver/backconnect_proxies.zip"
     ZIP_PASSWORD=$(openssl rand -base64 6 | cut -c1-6)
     zip -P $ZIP_PASSWORD $ZIP_FILE $PROXY_FILE
 
-    # Upload the zip file to Bashupload
+    # Tải tệp zip lên Bashupload
     UPLOAD_RESPONSE=$(curl -s --upload-file $ZIP_FILE https://bashupload.com/$ZIP_FILE)
 
-    # Extract the download link from the response
+    # Trích xuất liên kết tải xuống từ phản hồi
     DOWNLOAD_LINK=$(echo $UPLOAD_RESPONSE | grep -o 'https://bashupload.com/[^ ]*')
 
     echo "You can download the zipped proxy list from: $DOWNLOAD_LINK"
