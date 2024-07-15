@@ -8,6 +8,11 @@ sudo su
 
 # Kiểm tra và thêm cấu hình IPv6 vào /etc/network/interfaces nếu cần
 INTERFACES_FILE="/etc/network/interfaces"
+BACKUP_FILE="/etc/network/interfaces.bak"
+
+# Sao lưu tệp cấu hình hiện tại
+cp $INTERFACES_FILE $BACKUP_FILE
+
 if ! grep -q "iface eth0 inet6" $INTERFACES_FILE; then
     echo "Adding IPv6 configuration to $INTERFACES_FILE"
     cat <<EOT >> $INTERFACES_FILE
@@ -17,8 +22,16 @@ iface eth0 inet dhcp
 
 iface eth0 inet6 auto
 EOT
+
     # Khởi động lại dịch vụ mạng để áp dụng thay đổi
-    systemctl restart networking
+    if systemctl restart networking; then
+        echo "Network restarted successfully."
+    else
+        echo "Failed to restart network. Restoring previous configuration."
+        cp $BACKUP_FILE $INTERFACES_FILE
+        systemctl restart networking
+        exit 1
+    fi
 else
     echo "IPv6 configuration already exists in $INTERFACES_FILE"
 fi
