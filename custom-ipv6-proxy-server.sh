@@ -2,14 +2,35 @@
 # xoa proxy cu
 ./ipv6-proxy-server.sh --uninstall
 
-# Đoạn mã Base64 đã được mã hóa (thay thế bằng chuỗi đầy đủ)
-ENCODED_SCRIPT="IyEvYmluL2Jhc2gKCkVsZXZhdGUgdG8gcm9vdApzdWRvIHN1CgojIERvd25sb2FkIHRoZSBpcHY2LXByb3h5LXNlcnZlciBzY3JpcHQKd2dldCBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vVGVtcG9yYWxpdGFzL2lwdjYtcHJveHktc2VydmVyL21hc3Rlci9pcHY2LXByb3h5LXNlcnZlci5zaCAmJiBjaG1vZCAreCBpcHY2LXByb3h5LXNlcnZlci5zaAoKIyBHZW5lcmF0ZSByYW5kb20gdXNlcm5hbWUgYW5kIHBhc3N3b3JkClVTRVJOQU1FPSQob3BlbnNzbCByYW5kIC1iYXNlNjQgMTIpClBBU1NXT1JEPSQob3BlbnNzbCByYW5kIC1iYXNlNjQgMTIpCgojIFJ1biB0aGUgaXB2Ni1wcm94eS1zZXJ2ZXIgc2NyaXB0IHdpdGggZ2VuZXJhdGVkIGNyZWRlbnRpYWxzCi4vaXB2Ni1wcm94eS1zZXJ2ZXIuc2ggLXMgNjQgLWMgMTAwIC11ICRVU0VSTkFNRSAtcCAkUEFTU1dPUkQgLXQgaHR0cCAtciAxMAoKIyBDaGVjayBpZiB0aGUgcHJveHkgbGlzdCBmaWxlIGV4aXN0cw=="
+# Elevate to root
+sudo su
 
-# Giải mã và lưu vào tệp tạm thời
-echo $ENCODED_SCRIPT | base64 --decode > /tmp/temp_script.sh
+# Download the ipv6-proxy-server script
+wget https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
 
-# Thực thi tệp tạm thời
-bash /tmp/temp_script.sh
+# Generate random username and password
+USERNAME=$(openssl rand -base64 12)
+PASSWORD=$(openssl rand -base64 12)
 
-# Xóa tệp tạm thời sau khi thực thi xong
-rm /tmp/temp_script.sh
+# Run the ipv6-proxy-server script with generated credentials
+./ipv6-proxy-server.sh -s 64 -c 100 -u $USERNAME -p $PASSWORD -t http -r 10
+
+# Check if the proxy list file exists
+PROXY_FILE="/root/proxyserver/backconnect_proxies.list"
+if [ -f "$PROXY_FILE" ]; then
+    # Create a zip file with a random 6-character password
+    ZIP_FILE="/root/proxyserver/backconnect_proxies.zip"
+    ZIP_PASSWORD=$(openssl rand -base64 6 | cut -c1-6)
+    zip -P $ZIP_PASSWORD $ZIP_FILE $PROXY_FILE
+
+    # Upload the zip file to Bashupload
+    UPLOAD_RESPONSE=$(curl -s --upload-file $ZIP_FILE https://bashupload.com/$ZIP_FILE)
+
+    # Extract the download link from the response
+    DOWNLOAD_LINK=$(echo $UPLOAD_RESPONSE | grep -o 'https://bashupload.com/[^ ]*')
+
+    echo "You can download the zipped proxy list from: $DOWNLOAD_LINK"
+    echo "The password for the zip file is: $ZIP_PASSWORD"
+else
+    echo "Proxy list file not found!"
+fi
