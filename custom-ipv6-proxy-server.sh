@@ -20,13 +20,17 @@ echo "Số lượng proxy cần tạo: $proxy_count"
 echo "Username: $username"
 echo "Password: $password"
 
-# Chạy script gốc với các tham số đã được chỉnh sửa
-wget https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
-./ipv6-proxy-server.sh -s 64 -c $proxy_count -u $username -p $password -t http -r 10
+# Tạo file cấu hình proxy (giả định bạn có sẵn mã hoặc lệnh để tạo proxy)
+# Dưới đây là ví dụ về cách tạo file cấu hình đơn giản cho mục đích minh họa
+cat <<EOF > ipv6-proxy-config.txt
+Proxy count: $proxy_count
+Username: $username
+Password: $password
+EOF
 
 # Nén các tệp tạo ra thành file zip với mật khẩu ngẫu nhiên
 zip_password=$(openssl rand -base64 12)
-zip -P "$zip_password" ipv6-proxy-config.zip ipv6-proxy-server.sh
+zip -P "$zip_password" ipv6-proxy-config.zip ipv6-proxy-config.txt
 
 # Tải tệp zip lên bashupload.com
 upload_response=$(curl -s --upload-file ipv6-proxy-config.zip https://bashupload.com/ipv6-proxy-config.zip)
