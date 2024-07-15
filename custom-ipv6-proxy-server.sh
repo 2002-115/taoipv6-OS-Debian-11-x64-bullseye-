@@ -4,7 +4,7 @@
 sudo su
 
 # Download the ipv6-proxy-server script
-wget https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
+wget -qO- https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh -O ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
 
 # Create a new file for proxies with unique credentials
 UNIQUE_PROXY_FILE="/root/proxyserver/unique_backconnect_proxies.list"
@@ -12,6 +12,9 @@ UNIQUE_PROXY_FILE="/root/proxyserver/unique_backconnect_proxies.list"
 
 # Loop to create 100 proxies with unique credentials
 for i in $(seq 1 100); do
+    # Uninstall any existing proxy server
+    ./ipv6-proxy-server.sh --uninstall
+
     # Generate random username and password
     USERNAME=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c12)
     PASSWORD=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c12)
