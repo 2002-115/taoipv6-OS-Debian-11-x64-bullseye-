@@ -2,11 +2,12 @@
 
 # Elevate to root
 sudo su
-# cai dat phu
-sudo apt-get install zip curl openssl
 
 # Download the ipv6-proxy-server script
 wget -qO- https://raw.githubusercontent.com/Temporalitas/ipv6-proxy-server/master/ipv6-proxy-server.sh -O ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
+
+# Create the directory for proxy files if it doesn't exist
+mkdir -p /root/proxyserver
 
 # Create a new file for proxies with unique credentials
 UNIQUE_PROXY_FILE="/root/proxyserver/unique_backconnect_proxies.list"
