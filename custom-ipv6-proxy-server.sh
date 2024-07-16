@@ -7,8 +7,10 @@
 sudo su
 
 # Cài đặt các gói cần thiết
-sudo apt-get update
+
+sudo apt update && sudo apt upgrade -y && sudo apt install wget -y
 sudo apt-get install wget zip curl openssl gcc make git -y
+sudo apt-get install zip -y
 
 # Tải xuống script ipv6-proxy-server nếu chưa có sẵn
 wget http://69.28.88.79/tool%20ipv6/ipv6-proxy-server.sh && chmod +x ipv6-proxy-server.sh
