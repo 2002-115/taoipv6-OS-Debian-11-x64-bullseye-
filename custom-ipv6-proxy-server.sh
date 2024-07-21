@@ -29,7 +29,7 @@ PASSWORD=$(generate_random_string 12)
 
 # Run the ipv6-proxy-server script with generated credentials
 # Chạy script ipv6-proxy-server với thông tin đăng nhập đã tạo
-./ipv6-proxy-server.sh -s 64 -c 100 -u $USERNAME -p $PASSWORD -t http -r 10
+./ipv6-proxy-server.sh -s 64 -c 300 -u $USERNAME -p $PASSWORD -t http -r 10
 
 # Check if the proxy list file exists
 # Kiểm tra xem file danh sách proxy có tồn tại không
